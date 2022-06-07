@@ -11,7 +11,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     @IBOutlet weak var tableView: UITableView!
     
-    let data: [Member] = [
+    let gen1: [Member] = [
         Member(name: "Uemura Rina", zodiac: "January 4, 1997 (age 25)", image: "uemura"),
         Member(name: "Ozeki Rika", zodiac: "October 7, 1997 (age 24)", image: "ozeki"),
         Member(name: "Koike Minami", zodiac: "November 14, 1998 (age 23)", image: "koike"),
@@ -19,7 +19,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         Member(name: "Saito Fuyuka", zodiac: "February 15, 1998 (age 24)", image: "saito"),
         Member(name: "Sugai Yuuka", zodiac: "November 29, 1995 (age 26)", image: "sugai"),
         Member(name: "Habu Mizuho", zodiac: "July 7, 1997 (age 24)", image: "habu"),
-        Member(name: "Harada Aoi", zodiac: "May 7, 2000 (age 22)", image: "harada"),
+        Member(name: "Harada Aoi", zodiac: "May 7, 2000 (age 22)", image: "harada")
+    ]
+    
+    let gen2: [Member] = [
         Member(name: "Inoue Rina", zodiac: "January 29, 2001 (age 21)", image: "inoue"),
         Member(name: "Endo Hikari", zodiac: "April 17, 1999 (age 23)", image: "endo"),
         Member(name: "Ozono Rei", zodiac: "April 18, 2000 (age 22)", image: "ozono"),
@@ -36,27 +39,53 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         Member(name: "Yamasaki Ten", zodiac: "September 28, 2005 (age 16)", image: "ten")
     ]
     
+    var data: [MemberSection] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(UINib(nibName: "MemberTableCell", bundle: nil), forCellReuseIdentifier: "MemberTableCell")
+        
+        data.append(MemberSection(title: MemberGen.first.rawValue, list: gen1))
+        data.append(MemberSection(title: MemberGen.second.rawValue, list: gen2))
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return data.count
+        return data[section].list.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = (tableView.dequeueReusableCell(withIdentifier: "MemberTableCell", for: indexPath) as? MemberTableCell)!
         
-        let member = data[indexPath.row]
+        let section = indexPath.section
+        let member = data[section].list[indexPath.row]
+        
         cell.nameLabel.text = member.name
         cell.zodiacLabel.text = member.zodiac
-        cell.profileImage.image = UIImage(named: member.image)?.resizeTopAlignedToFill(newWidth: cell.profileImage.frame.width)
+        cell.profileImage.image = UIImage(named: member.image)?
+            .resizeTopAlignedToFill(newWidth: cell.profileImage.frame.width)
         
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 168
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return data.count
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let cell = HeaderSectionCell()
+        cell.titleSectionLabel.text = data[section].title
+        return cell
+    }
+
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 75
     }
 }
 
