@@ -44,6 +44,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        navigationController?.navigationBar.prefersLargeTitles = true
+        
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(UINib(nibName: "MemberTableCell", bundle: nil), forCellReuseIdentifier: "MemberTableCell")
@@ -51,6 +53,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         data.append(MemberSection(title: MemberGen.first.rawValue, list: gen1))
         data.append(MemberSection(title: MemberGen.second.rawValue, list: gen2))
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        if let index = self.tableView.indexPathForSelectedRow{
+            self.tableView.deselectRow(at: index, animated: true)
+        }
+    }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return data[section].list.count
@@ -62,6 +70,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         let section = indexPath.section
         let member = data[section].list[indexPath.row]
         
+        cell.selectionStyle = .default
         cell.nameLabel.text = member.name
         cell.zodiacLabel.text = member.zodiac
         cell.profileImage.image = UIImage(named: member.image)?
@@ -74,18 +83,29 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         return 168
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let member = data[indexPath.section].list[indexPath.row]
+        
+        if let detail = storyboard?.instantiateViewController(withIdentifier: "DetailViewController") as? DetailViewController {
+            detail.name = member.name
+            detail.birthday = member.zodiac
+            detail.photo = UIImage(named: member.image)!
+            self.navigationController?.pushViewController(detail, animated: true)
+        }
+    }
+    
     func numberOfSections(in tableView: UITableView) -> Int {
         return data.count
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let cell = HeaderSectionCell()
-        cell.titleSectionLabel.text = data[section].title
+        cell.titleSectionLabel.text = data[section].title.uppercased()
         return cell
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 75
+        return 45
     }
 }
 

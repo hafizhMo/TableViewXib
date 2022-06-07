@@ -23,5 +23,7 @@ class MemberTableCell: UITableViewCell {
         profileImage.layer.borderColor = UIColor.gray.cgColor
         profileImage.layer.cornerRadius = profileImage.frame.height/2
         profileImage.clipsToBounds = true
+        
     }
+    
 }
